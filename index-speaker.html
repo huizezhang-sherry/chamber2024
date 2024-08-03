@@ -689,23 +689,11 @@ Geodetic CRS:  WGS 84
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-<!-- ## back to spatial cubble  -->
-<!-- ::: column -->
-<!-- back to the nested form: -->
-<!-- ```{r} -->
-<!-- #| echo: true -->
-<!-- (weather_back <- weather_long %>%  -->
-<!--    face_spatial()) -->
-<!-- identical(weather_back, weather) -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- -   On the right, `weather_long` is switched back the nested form with -->
-<!--     the function `face_spatial()` -->
-<!-- -   As you can see from the last line of code, `face_temporal()` and -->
-<!--     `face_spatial()` are the exact inverse. -->
-<!-- -   Hence `weather_back` and `weather` are identical -->
-<!-- ::: -->
 </section>
+<section id="functionalities-implemented" class="slide level2">
+<h2>Functionalities implemented</h2>
+
+<img data-src="figures/cubble-functions.png" class="r-stretch"></section>
 <section id="access-variables-in-the-other-form" class="slide level2 smaller">
 <h2>Access variables in the other form</h2>
 <p>Reference temporal variables with <code>$</code></p>
@@ -768,10 +756,19 @@ Geodetic CRS:  WGS 84
       }</style></aside>
 </div>
 </section>
-<section id="why-do-you-need-a-glyph-map" class="slide level2">
-<h2>Why do you need a glyph map?</h2>
+<section id="glyph-map" class="slide level2 smaller center">
+<h2>Glyph map</h2>
+<p>TODO: add a background</p>
+<ul>
+<li><code>geom_glyph</code></li>
+<li><code>geom_glyph_box</code></li>
+<li><code>geom_glyph_line</code></li>
+</ul>
+</section>
+<section id="background-what-are-glyph-maps-and-why-do-you-need-one" class="slide level2">
+<h2><span class="r-fit-text">Background: what are glyph maps and why do you need one?</span></h2>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><div class="footer">
+<img data-src="index_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1440"><div class="footer">
 <p>Modified from <em>Glyph-maps for Visually Exploring Temporal Patterns in Climate Data and Models</em> (Wickham, 2012)</p>
 </div>
 <aside class="notes">
@@ -788,11 +785,7 @@ Geodetic CRS:  WGS 84
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</section>
-<section id="why-do-you-need-a-glyph-map-1" class="slide level2">
-<h2>Why do you need a glyph map?</h2>
-
-<img data-src="index_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
+<aside class="notes">
 <p>Instead the temporal pattern is much easier to observe if shown in a time series plot.</p>
 <p>What a glyph map do is to put the time series glyph in the place of the location, so you can see the temporal trend in the space.</p>
 <style type="text/css">
@@ -807,8 +800,20 @@ Geodetic CRS:  WGS 84
           display:block!important;
       }</style></aside>
 </section>
-<section id="glyph-map-transformation" class="slide level2">
-<h2>Glyph map transformation</h2>
+<section id="background-what-are-glyph-maps-and-why-do-you-need-one-1" class="slide level2">
+<h2><span class="r-fit-text">Background: what are glyph maps and why do you need one?</span></h2>
+
+<img data-src="figures/glyph1.png" class="r-stretch"></section>
+<section id="background-what-are-glyph-maps-and-why-do-you-need-one-2" class="slide level2">
+<h2><span class="r-fit-text">Background: what are glyph maps and why do you need one?</span></h2>
+
+<img data-src="figures/glyph2.png" class="r-stretch"></section>
+<section id="background-what-are-glyph-maps-and-why-do-you-need-one-3" class="slide level2">
+<h2><span class="r-fit-text">Background: what are glyph maps and why do you need one?</span></h2>
+
+<img data-src="index_files/figure-revealjs/unnamed-chunk-15-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1440"></section>
+<section id="glyph-map-linear-transformation" class="slide level2">
+<h2>Glyph map: linear transformation</h2>
 
 <img data-src="figures/glyph-steps.png" class="quarto-figure quarto-figure-center r-stretch" width="1540"><div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href=""></a>DATA <span class="sc">%&gt;%</span></span>
@@ -848,30 +853,32 @@ Geodetic CRS:  WGS 84
 <h2>Aggregated temperature by month</h2>
 <div class="cell columns column-output-location" data-layout-align="center">
 <div class="column">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>cb <span class="ot">&lt;-</span>  <span class="fu">make_cubble</span>(<span class="at">spatial =</span> stations, <span class="at">temporal =</span> temperature)</span>
-<span id="cb22-2"><a href=""></a></span>
-<span id="cb22-3"><a href=""></a>cb_glyph <span class="ot">&lt;-</span> cb <span class="sc">%&gt;%</span></span>
-<span id="cb22-4"><a href=""></a>  <span class="fu">face_temporal</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb22-5"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">month =</span> lubridate<span class="sc">::</span><span class="fu">month</span>(date)) <span class="sc">%&gt;%</span></span>
-<span id="cb22-6"><a href=""></a>  <span class="fu">group_by</span>(month) <span class="sc">%&gt;%</span> </span>
-<span id="cb22-7"><a href=""></a>  <span class="fu">summarise</span>(<span class="at">tmax =</span> <span class="fu">mean</span>(tmax, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb22-8"><a href=""></a>  <span class="fu">unfold</span>(long, lat)</span>
-<span id="cb22-9"><a href=""></a></span>
-<span id="cb22-10"><a href=""></a>cb_glyph <span class="sc">%&gt;%</span> </span>
-<span id="cb22-11"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x_major =</span> long, </span>
-<span id="cb22-12"><a href=""></a>             <span class="at">x_minor =</span> month,</span>
-<span id="cb22-13"><a href=""></a>             <span class="at">y_major =</span> lat, </span>
-<span id="cb22-14"><a href=""></a>             <span class="at">y_minor =</span> tmax)) <span class="sc">+</span></span>
-<span id="cb22-15"><a href=""></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> oz_simp, <span class="at">fill =</span> <span class="st">"grey90"</span>,</span>
-<span id="cb22-16"><a href=""></a>          <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb22-17"><a href=""></a>  <span class="fu">geom_glyph_box</span>(<span class="at">width =</span> <span class="fl">1.3</span>, <span class="at">height =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb22-18"><a href=""></a>  <span class="fu">geom_glyph</span>(<span class="at">width =</span> <span class="fl">1.3</span>, <span class="at">height =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
-<span id="cb22-19"><a href=""></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>cb <span class="ot">&lt;-</span> <span class="fu">make_cubble</span>(</span>
+<span id="cb22-2"><a href=""></a>  <span class="at">spatial =</span> stations, </span>
+<span id="cb22-3"><a href=""></a>  <span class="at">temporal =</span> temperature</span>
+<span id="cb22-4"><a href=""></a>  )</span>
+<span id="cb22-5"><a href=""></a></span>
+<span id="cb22-6"><a href=""></a>cb_glyph <span class="ot">&lt;-</span> cb <span class="sc">%&gt;%</span></span>
+<span id="cb22-7"><a href=""></a>  <span class="fu">face_temporal</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb22-8"><a href=""></a>  <span class="fu">group_by</span>(<span class="at">month =</span> lubridate<span class="sc">::</span><span class="fu">month</span>(date)) <span class="sc">%&gt;%</span> </span>
+<span id="cb22-9"><a href=""></a>  <span class="fu">summarise</span>(<span class="at">tmax =</span> <span class="fu">mean</span>(tmax, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb22-10"><a href=""></a>  <span class="fu">unfold</span>(long, lat)</span>
+<span id="cb22-11"><a href=""></a></span>
+<span id="cb22-12"><a href=""></a>cb_glyph <span class="sc">%&gt;%</span> </span>
+<span id="cb22-13"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x_major =</span> long, </span>
+<span id="cb22-14"><a href=""></a>             <span class="at">x_minor =</span> month,</span>
+<span id="cb22-15"><a href=""></a>             <span class="at">y_major =</span> lat, </span>
+<span id="cb22-16"><a href=""></a>             <span class="at">y_minor =</span> tmax)) <span class="sc">+</span></span>
+<span id="cb22-17"><a href=""></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> oz_simp, <span class="at">fill =</span> <span class="st">"grey90"</span>,</span>
+<span id="cb22-18"><a href=""></a>          <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb22-19"><a href=""></a>  <span class="fu">geom_glyph_box</span>(<span class="at">width =</span> <span class="fl">1.3</span>, <span class="at">height =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb22-20"><a href=""></a>  <span class="fu">geom_glyph</span>(<span class="at">width =</span> <span class="fl">1.3</span>, <span class="at">height =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb22-21"><a href=""></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -930,9 +937,12 @@ Geodetic CRS:  WGS 84
 </ul></li>
 <li>papers:
 <ul>
-<li><p>Zhang, H. S., Cook, D., Laa, U., Langrené, N., &amp; Menéndez, P. (2024). cubble: An R package for organizing and wrangling multivariate spatio-temporal data. Accepted by the Journal of Statistical Software: <a href="https://arxiv.org/abs/2205.00259" class="uri">https://arxiv.org/abs/2205.00259</a></p></li>
-<li><p>Wickham, H., Hofmann, H., Wickham, C., &amp; Cook, D. (2012). Glyph‐maps for visually exploring temporal patterns in climate data and models. Environmetrics, 23(5), 382-393: <a href="https://vita.had.co.nz/papers/glyph-maps.pdf" class="uri">https://vita.had.co.nz/papers/glyph-maps.pdf</a></p></li>
-</ul></li>
+<li>Zhang, H. S., Cook, D., Laa, U., Langrené, N., &amp; Menéndez, P. (2024). cubble: An R package for organizing and wrangling multivariate spatio-temporal data. Accepted by the Journal of Statistical Software: <a href="https://arxiv.org/abs/2205.00259" class="uri">https://arxiv.org/abs/2205.00259</a></li>
+</ul>
+<!-- -   Wickham, H., Hofmann, H., Wickham, C., & Cook, D. (2012). -->
+<!--     Glyph‐maps for visually exploring temporal patterns in climate -->
+<!--     data and models. Environmetrics, 23(5), 382-393: -->
+<!--     <https://vita.had.co.nz/papers/glyph-maps.pdf> --></li>
 </ul>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">

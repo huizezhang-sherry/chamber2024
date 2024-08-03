@@ -286,27 +286,10 @@ weather_long |> has_gaps()
 
 :::
 
-<!-- ## back to spatial cubble  -->
+## Functionalities implemented 
 
-<!-- ::: column -->
-<!-- back to the nested form: -->
+![](figures/cubble-functions.png)
 
-<!-- ```{r} -->
-<!-- #| echo: true -->
-<!-- (weather_back <- weather_long %>%  -->
-<!--    face_spatial()) -->
-
-<!-- identical(weather_back, weather) -->
-<!-- ``` -->
-<!-- ::: -->
-<!-- -   On the right, `weather_long` is switched back the nested form with -->
-<!--     the function `face_spatial()` -->
-
-<!-- -   As you can see from the last line of code, `face_temporal()` and -->
-<!--     `face_spatial()` are the exact inverse. -->
-
-<!-- -   Hence `weather_back` and `weather` are identical -->
-<!-- ::: -->
 
 ## Access variables in the other form {.smaller}
 
@@ -347,9 +330,20 @@ weather_long %>% unfold(long, lat)
     we will see how it can help us to create a glyph map.
 :::
 
-## Why do you need a glyph map?
+## Glyph map {.smaller .center}
+
+TODO: add a background
+
+- `geom_glyph`
+- `geom_glyph_box`
+- `geom_glyph_line`
+
+## [Background: what are glyph maps and why do you need one?]{.r-fit-text}
 
 ```{r}
+#| fig.width: 15
+#| fig.height: 7
+
 library(GGally)
 out <- GGally::nasa %>% 
   group_split(long, lat) %>% 
@@ -363,10 +357,11 @@ facet_plot <- out %>%
   ggplot() +
   geom_tile(aes(x = long, y = lat, fill = diff)) + 
   geom_sf(data = coastline, color = "grey") + 
-  scale_fill_gradient2(midpoint=0, mid="white", high="red", low="blue") + 
+  scale_fill_gradient2(midpoint = 0, mid = "white", high = "red", 
+                       low = "blue", name = "De-seasonalized \n temperature") + 
   scale_y_continuous(breaks = c(-20, 0, 20, 40)) + 
   scale_x_continuous(breaks = c(-110, -70)) +
-  facet_grid(year ~ month) + 
+  facet_grid(year ~ factor(month.abb[month],levels=month.abb)) + 
   coord_sf()
 
 map_data <- rnaturalearth::ne_countries(returnclass = "sf") %>%
@@ -374,7 +369,7 @@ map_data <- rnaturalearth::ne_countries(returnclass = "sf") %>%
   st_set_crs(st_crs(nasa)) %>% 
   st_crop(nasa_bbox)
 
-glyph_plot <- out %>% 
+glyph_plot <- out %>%
   ggplot() + 
   geom_sf(data = map_data, color = "grey", fill = "grey") + 
   geom_glyph(aes(x_major = long, y_major = lat, 
@@ -401,13 +396,6 @@ to comprehend the temporal structure of the data since you have to
 compare points at the same location across panels to digest the pattern.
 :::
 
-## Why do you need a glyph map?
-
-```{r}
-#| fig-width: 10
-glyph_plot
-```
-
 ::: notes
 Instead the temporal pattern is much easier to observe if shown in a
 time series plot.
@@ -416,7 +404,49 @@ What a glyph map do is to put the time series glyph in the place of the
 location, so you can see the temporal trend in the space.
 :::
 
-## Glyph map transformation
+```{r eval = FALSE}
+#| fig.height: 3
+out %>% filter(time %in% c(1, 2, 3)) %>%
+  ggplot() +
+  geom_tile(aes(x = long, y = lat, fill = diff)) + 
+  geom_sf(data = coastline, color = "grey") + 
+  scale_fill_gradient2(midpoint=0, mid="white", high="red", low="blue", name = "temp. resid.") + 
+  scale_y_continuous(breaks = c(-20, 0, 20, 40)) + 
+  scale_x_continuous(breaks = c(-110, -70)) +
+  facet_grid(year ~ month) + 
+  coord_sf() + 
+  ggtitle("De-seasonalized temperature")
+
+out |> filter(x == 12, y == 12) |>
+  ggplot() +
+  geom_line(aes(x = date, y = diff)) +
+  theme_bw() + 
+  ylab("temp. resid.") + 
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 20))
+
+```
+
+## [Background: what are glyph maps and why do you need one?]{.r-fit-text}
+
+![](figures/glyph1.png)
+
+
+## [Background: what are glyph maps and why do you need one?]{.r-fit-text}
+
+![](figures/glyph2.png)
+
+
+## [Background: what are glyph maps and why do you need one?]{.r-fit-text}
+
+```{r}
+#| fig.width: 15
+#| fig.height: 7
+facet_plot
+```
+
+
+## Glyph map: linear transformation
 
 ```{r}
 knitr::include_graphics(here::here("figures/glyph-steps.png"))
@@ -470,12 +500,14 @@ DATA %>%
 #| fig-width: 8
 #| fig-height: 8
 
-cb <-  make_cubble(spatial = stations, temporal = temperature)
+cb <- make_cubble(
+  spatial = stations, 
+  temporal = temperature
+  )
 
 cb_glyph <- cb %>%
   face_temporal() %>%
-  mutate(month = lubridate::month(date)) %>%
-  group_by(month) %>% 
+  group_by(month = lubridate::month(date)) %>% 
   summarise(tmax = mean(tmax, na.rm = TRUE)) %>%
   unfold(long, lat)
 
@@ -547,10 +579,10 @@ generate_svg(a, filename = "figures/qrcode.svg")
         multivariate spatio-temporal data. Accepted by the Journal of
         Statistical Software: <https://arxiv.org/abs/2205.00259>
 
-    -   Wickham, H., Hofmann, H., Wickham, C., & Cook, D. (2012).
-        Glyph‐maps for visually exploring temporal patterns in climate
-        data and models. Environmetrics, 23(5), 382-393:
-        <https://vita.had.co.nz/papers/glyph-maps.pdf>
+    <!-- -   Wickham, H., Hofmann, H., Wickham, C., & Cook, D. (2012). -->
+    <!--     Glyph‐maps for visually exploring temporal patterns in climate -->
+    <!--     data and models. Environmetrics, 23(5), 382-393: -->
+    <!--     <https://vita.had.co.nz/papers/glyph-maps.pdf> -->
 
 ```{r eval = FALSE}
 # script for diagram
