@@ -58,6 +58,10 @@ library(stars)
 }
 ```
 
+
+Spatio-temporal data can mean different things and today we
+will talk about vector data.
+
 ```{r}
 set.seed(123)
 aus_stations <- cubble::climate_aus |> sample_n(size = 50)
@@ -87,9 +91,6 @@ trajectory <- dplyr::storms %>%
 ```{r}
 vector | raster | trajectory
 ```
-
-Spatio-temporal can mean a whole range of different things! Today we
-will talk about vector data.
 
 ::: notes
 Here we have three different types: vector, raster, trajectory data
@@ -157,11 +158,11 @@ knitr::include_graphics(here::here("figures/cubble-operations.png"))
 ```{r echo = FALSE}
 stations <- cubble::climate_aus |> 
   rowwise() %>% 
-  filter(nrow(ts) == 366) %>% 
+  filter(nrow(ts) == 366, id != "ASN00014517") %>% 
   as_tibble() %>% 
   filter(row_number() %% 7 == 1) %>% 
   select(-ts) |> 
-  sf::st_as_sf(coords = c("long", "lat"), crs = "EPSG:4326")
+  sf::st_as_sf(coords = c("long", "lat"), crs = "EPSG:4326") 
 
 temperature <- cubble::climate_aus  %>% 
   face_temporal() %>% 
@@ -290,49 +291,7 @@ weather_long |> has_gaps()
 
 ![](figures/cubble-functions.png)
 
-
-## Access variables in the other form {.smaller}
-
-Reference temporal variables with `$`
-
-```{r}
-#| echo: true
-weather %>% 
-  mutate(avg_tmax = mean(ts$tmax, na.rm = TRUE))
-```
-
-. . .
-
-Move spatial variables into the long form
-
-```{r echo = TRUE}
-weather_long %>% unfold(long, lat)
-```
-
-::: notes
--   Sometimes, you may need to access variables from the other form for
-    your analysis.
-
--   For example, we may want to calculate some per station summary of
-    the time series data.
-
--   We can refer to the temporal variables from the nested form with the
-    `$` sign.
-
--   Here I'm calculating the average maximum temperature across the
-    whole year for each station and I need to get access to `tmax` from
-    the list-column `ts`.
-
--   In the long form, you need the cubble verb `unfold()` to move the
-    spatial variables into the long form.
-
--   Here I move the two coordinate columns into the long form and later
-    we will see how it can help us to create a glyph map.
-:::
-
-## Glyph map {.smaller .center}
-
-TODO: add a background
+## Glyph map {.smaller .center background-image="figures/glyph-bg.png" background-size="60%" background-position="right"}
 
 - `geom_glyph`
 - `geom_glyph_box`
@@ -492,36 +451,79 @@ DATA %>%
     here.
 :::
 
-## Aggregated temperature by month {.smaller}
+## [Example: averaged max temperature by month in Australia]{.r-fit-text}
+
+```{r echo = TRUE}
+cb <- make_cubble(spatial = stations, temporal = temperature)
+
+(cb_glyph <- cb %>%
+  face_temporal() %>%
+  tsibble::index_by(month = lubridate::month(date)) |> 
+  summarise(tmax = mean(tmax, na.rm = TRUE)) %>%
+  unfold(long, lat))
+```
+
+## [Example: averaged max temperature by month in Australia]{.r-fit-text}
+
+::::columns
+
+::: {.column width="40%"}
 
 ```{r}
-#| output-location: column
-#| echo: true
+#| fig-width: 4
+#| fig-height: 6
+cb_tbl <- cb_glyph |> as_tibble()
+group1_id <- cb_tbl |> filter(lat > -15) |> pull(id) |> unique()
+group2_id <- cb_tbl |> filter(month == 6, tmax > 27) |> pull(id)
+group3_id <- cb_tbl |> filter(month == 1, tmax > 35) |> pull(id)
+group3_id <- group3_id[!(group3_id %in% group2_id)]
+group4_id <- cb_tbl |> filter(lat < -42) |> pull(id) |> unique()
+
+cb_grp <- cb_glyph |> 
+  as_tibble() |>
+  mutate(group = case_when(
+    id %in% group1_id ~ "Far north",
+    id %in% group2_id ~ "North",
+    id %in% group3_id ~ "In land",
+    id %in% group4_id  ~ "Tasmania",
+    TRUE ~ NA_character_
+  ),
+  group = factor(group, levels = c("Far north", "North", "In land", "Tasmania")))
+
+cb_grp |>
+  filter(!is.na(group)) |> 
+  ggplot(aes(x = month, y = tmax, group = id)) +
+  geom_line(data = cb_grp |> select(-group) , color = "grey80") + 
+  geom_line(data = cb_grp |> filter(!is.na(group)), aes(color = group)) + 
+  scale_x_continuous(breaks = 1:12, labels = month.abb) + 
+  scale_color_brewer(palette = "Dark2") +
+  facet_wrap(vars(group), ncol = 1) + 
+  theme_bw() + 
+  theme(panel.grid = element_blank(), legend.position = "bottom")
+```
+
+:::
+
+:::{.column width="60%"}
+
+```{r}
+#| echo: false
 #| fig-width: 8
 #| fig-height: 8
-
-cb <- make_cubble(
-  spatial = stations, 
-  temporal = temperature
-  )
-
-cb_glyph <- cb %>%
-  face_temporal() %>%
-  group_by(month = lubridate::month(date)) %>% 
-  summarise(tmax = mean(tmax, na.rm = TRUE)) %>%
-  unfold(long, lat)
-
-cb_glyph %>% 
-  ggplot(aes(x_major = long, 
-             x_minor = month,
-             y_major = lat, 
-             y_minor = tmax)) +
+cb_grp %>% 
+  ggplot(aes(x_major = long, x_minor = month,
+             y_major = lat, y_minor = tmax, group = id, color = group)) +
   geom_sf(data = oz_simp, fill = "grey90",
           color = "white", inherit.aes = FALSE) +
-  geom_glyph_box(width = 1.3, height = 0.5) + 
-  geom_glyph(width = 1.3, height = 0.5) + 
+  geom_glyph_box(width = 1.5, height = 0.8) + 
+  geom_glyph(aes(color = group), width = 1.5, height = 0.8) + 
+  scale_color_manual(values = c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "grey70")) +
   ggthemes::theme_map()
 ```
+
+:::
+::::
+
 
 ## Extensions to line glyphs {.smaller}
 
