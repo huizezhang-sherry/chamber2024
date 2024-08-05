@@ -1,6 +1,6 @@
 ---
 title: "Switching between space and time: Spatio-temporal analysis with cubble"
-subtitle: "JSM 2024 John M. Chambers Statistical Software Award"
+subtitle: "John M. Chambers Statistical Software Award"
 author: "H. Sherry Zhang " 
 institute: "University of Texas at Austin" 
 date: "2024 Aug 05"
@@ -114,11 +114,15 @@ In my talk today, we will focus on vector data.
 
 ## 
 
-Sometimes you want to bury your head on the spatial side of the data,
-and sometimes you want to focus on the temporal side.
+```{r}
+#| out-height: 50%
+knitr::include_graphics(here::here("figures/motivation.png"))
+```
+. . .
 
 Cubble is a nested object built on tibble that allow easy pivoting
-between spatial and temporal form.
+between spatial and temporal aspect of the data.
+
 
 ## 
 
@@ -473,7 +477,8 @@ cb <- make_cubble(spatial = stations, temporal = temperature)
 
 ```{r}
 #| fig-width: 15
-cb_tbl <- cb_glyph |> as_tibble() |> filter(!is.na(tmax))
+#| fig-height: 6
+cb_tbl <- cb_glyph |> as_tibble() |> filter(!is.na(tmax), id != "ASN00067033")
 p1 <- cb_tbl |> ggplot(aes(x = month, y = tmax, group = id, color = tmax)) +
   geom_line() +
   scale_x_continuous(breaks = 1:12, labels = month.abb) + 
@@ -566,7 +571,7 @@ cb_grp %>%
 ::: {.column width="50%"}
 
 ```{r eval = FALSE, echo = TRUE}
-cb_grp %>% 
+DATA %>% 
   ggplot(aes(x_major = long, 
              x_minor = month,
              y_major = lat, 
@@ -581,7 +586,6 @@ cb_grp %>%
   geom_glyph(width = 1.5,
              height = 0.8) + 
   ...
-  ggthemes::theme_map()
 ```
 
 :::
@@ -607,19 +611,13 @@ cb_grp %>%
 ::::
 
 
-## Extensions to line glyphs {.smaller}
+## Extensions to line glyphs {.smaller background-image="figures/glyph-extensions.png" background-size="60%" background-position="50% 70%"}
 
 *From Google Summer of Code this year...*
 
-::: columns
-::: column
-![ribbon glyph](figures/glyph-ribbon.png)
-:::
+<!-- ![](figures/glyph-extensions.png){fig-align="center"} -->
 
-::: column
-![segment glyph](figures/glyph-segment.png)
-:::
-:::
+
 
 ## The team {.center}
 
@@ -657,7 +655,7 @@ generate_svg(a, filename = "figures/qrcode.svg")
         <https://huizezhang-sherry.github.io/cubble/>
     -   CRAN:
         <https://cran.r-project.org/web/packages/cubble/index.html>
--   papers:
+-   paper:
     -   Zhang, H. S., Cook, D., Laa, U., Langrené, N., & Menéndez, P.
         (2024). cubble: An R package for organizing and wrangling
         multivariate spatio-temporal data. Accepted by the Journal of

@@ -397,7 +397,7 @@
 
 <section id="title-slide" data-background-image="figures/logo.png" data-background-position="98% 98%" data-background-size="7%" class="quarto-title-block center">
   <h1 class="title">Switching between space and time: Spatio-temporal analysis with cubble</h1>
-  <p class="subtitle">JSM 2024 John M. Chambers Statistical Software Award</p>
+  <p class="subtitle">John M. Chambers Statistical Software Award</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -447,8 +447,18 @@ H. Sherry Zhang
 </section>
 <section id="section" class="slide level2">
 <h2></h2>
-<p>Sometimes you want to bury your head on the spatial side of the data, and sometimes you want to focus on the temporal side.</p>
-<p>Cubble is a nested object built on tibble that allow easy pivoting between spatial and temporal form.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="figures/motivation.png" class="quarto-figure quarto-figure-center" style="height:50.0%" width="908"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>Cubble is a nested object built on tibble that allow easy pivoting between spatial and temporal aspect of the data.</p>
+</div>
 </section>
 <section id="section-1" class="slide level2">
 <h2></h2>
@@ -706,7 +716,7 @@ Geodetic CRS:  WGS 84
 <section id="background-what-are-glyph-maps-and-why-do-you-need-one" class="slide level2">
 <h2><span class="r-fit-text">Background: what are glyph maps and why do you need one?</span></h2>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-11-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1440"><div class="footer">
+<img data-src="index_files/figure-revealjs/unnamed-chunk-12-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1440"><div class="footer">
 <p>Modified from <em>Glyph-maps for Visually Exploring Temporal Patterns in Climate Data and Models</em> (Wickham, 2012)</p>
 </div>
 <aside class="notes">
@@ -749,7 +759,7 @@ Geodetic CRS:  WGS 84
 <section id="background-what-are-glyph-maps-and-why-do-you-need-one-3" class="slide level2">
 <h2><span class="r-fit-text">Background: what are glyph maps and why do you need one?</span></h2>
 
-<img data-src="index_files/figure-revealjs/unnamed-chunk-13-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1440"></section>
+<img data-src="index_files/figure-revealjs/unnamed-chunk-14-1.png" class="quarto-figure quarto-figure-center r-stretch" width="1440"></section>
 <section id="glyph-map-linear-transformation" class="slide level2">
 <h2>Glyph map: linear transformation</h2>
 
@@ -821,7 +831,7 @@ Geodetic CRS:  WGS 84
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" width="1440"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="1440"></p>
 </figure>
 </div>
 </div>
@@ -837,7 +847,7 @@ Geodetic CRS:  WGS 84
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -847,7 +857,7 @@ Geodetic CRS:  WGS 84
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-20-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -860,7 +870,7 @@ Geodetic CRS:  WGS 84
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>cb_grp <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>DATA <span class="sc">%&gt;%</span> </span>
 <span id="cb20-2"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x_major =</span> long, </span>
 <span id="cb20-3"><a href=""></a>             <span class="at">x_minor =</span> month,</span>
 <span id="cb20-4"><a href=""></a>             <span class="at">y_major =</span> lat, </span>
@@ -868,22 +878,20 @@ Geodetic CRS:  WGS 84
 <span id="cb20-6"><a href=""></a>             <span class="at">group =</span> id,</span>
 <span id="cb20-7"><a href=""></a>             <span class="at">color =</span> group)) <span class="sc">+</span></span>
 <span id="cb20-8"><a href=""></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> oz_simp, </span>
-<span id="cb20-9"><a href=""></a>          <span class="at">fill =</span> <span class="st">"grey90"</span>,</span>
-<span id="cb20-10"><a href=""></a>          <span class="at">color =</span> <span class="st">"white"</span>, </span>
-<span id="cb20-11"><a href=""></a>          <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
-<span id="cb20-12"><a href=""></a>  <span class="fu">geom_glyph_box</span>(<span class="at">width =</span> <span class="fl">1.5</span>, </span>
-<span id="cb20-13"><a href=""></a>                 <span class="at">height =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
-<span id="cb20-14"><a href=""></a>  <span class="fu">geom_glyph</span>(<span class="at">width =</span> <span class="fl">1.5</span>,</span>
-<span id="cb20-15"><a href=""></a>             <span class="at">height =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
-<span id="cb20-16"><a href=""></a>  ...</span>
-<span id="cb20-17"><a href=""></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-9"><a href=""></a>          ...</span>
+<span id="cb20-10"><a href=""></a>          <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb20-11"><a href=""></a>  <span class="fu">geom_glyph_box</span>(<span class="at">width =</span> <span class="fl">1.5</span>, </span>
+<span id="cb20-12"><a href=""></a>                 <span class="at">height =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb20-13"><a href=""></a>  <span class="fu">geom_glyph</span>(<span class="at">width =</span> <span class="fl">1.5</span>,</span>
+<span id="cb20-14"><a href=""></a>             <span class="at">height =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb20-15"><a href=""></a>  ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div><div class="column" style="width:50%;">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-22-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -891,26 +899,10 @@ Geodetic CRS:  WGS 84
 </div>
 </div>
 </section>
-<section id="extensions-to-line-glyphs" class="slide level2 smaller">
+<section id="extensions-to-line-glyphs" class="slide level2 smaller" data-background-image="figures/glyph-extensions.png" data-background-size="60%" data-background-position="50% 70%">
 <h2>Extensions to line glyphs</h2>
 <p><em>From Google Summer of Code this year…</em></p>
-<div class="columns">
-<div class="column">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="figures/glyph-ribbon.png"></p>
-<figcaption>ribbon glyph</figcaption>
-</figure>
-</div>
-</div><div class="column">
-<div class="quarto-figure quarto-figure-center">
-<figure>
-<p><img data-src="figures/glyph-segment.png"></p>
-<figcaption>segment glyph</figcaption>
-</figure>
-</div>
-</div>
-</div>
+<!-- ![](figures/glyph-extensions.png){fig-align="center"} -->
 </section>
 <section id="the-team" class="slide level2 center">
 <h2>The team</h2>
@@ -940,7 +932,7 @@ Geodetic CRS:  WGS 84
 <li><i class="fa-brands fa-github" aria-label="github"></i>: <a href="https://huizezhang-sherry.github.io/cubble/" class="uri">https://huizezhang-sherry.github.io/cubble/</a></li>
 <li>CRAN: <a href="https://cran.r-project.org/web/packages/cubble/index.html" class="uri">https://cran.r-project.org/web/packages/cubble/index.html</a></li>
 </ul></li>
-<li>papers:
+<li>paper:
 <ul>
 <li>Zhang, H. S., Cook, D., Laa, U., Langrené, N., &amp; Menéndez, P. (2024). cubble: An R package for organizing and wrangling multivariate spatio-temporal data. Accepted by the Journal of Statistical Software: <a href="https://arxiv.org/abs/2205.00259" class="uri">https://arxiv.org/abs/2205.00259</a></li>
 </ul>
