@@ -1,19 +1,25 @@
 ---
 title: "Switching between space and time: Spatio-temporal analysis with cubble"
-date: "2024 Aug 05"
+subtitle: "JSM 2024 John M. Chambers Statistical Software Award"
+author: "H. Sherry Zhang " 
 institute: "University of Texas at Austin" 
-author: "H. Sherry Zhang" 
+date: "2024 Aug 05"
 format: 
   revealjs:
     scrollable: true
     slide-number: true
     show-slide-number: all
     aspectratio: 169
-    theme: [default]
+    theme: serif
     preview-links: auto
     multiplex: true
     pdf-separate-fragments: true
     css: style.css
+    footer: "https://sherryzhang-chamber2024.netlify.app"
+title-slide-attributes: 
+  data-background-image: figures/logo.png
+  data-background-size: 7%
+  data-background-position: 98% 98%
 editor_options: 
   chunk_output_type: console
 # include-in-header:
@@ -58,7 +64,6 @@ library(stars)
 }
 ```
 
-
 Spatio-temporal data can mean different things and today we
 will talk about vector data.
 
@@ -72,20 +77,20 @@ vector <- ggplot() +
   geom_sf(data = oz_simp, fill = "grey95", color = "white") +
   geom_point(data = aus_stations, aes(long,lat)) + 
   ggthemes::theme_map() + 
-  ggtitle("vector: Australia weather station locations")
+  ggtitle("Vector: Australia weather station locations")
 tif = system.file("tif/L7_ETMs.tif", package = "stars")
 x = read_stars(tif)
 x <- x[,,,1:3] |> st_rgb()  # x contains colors as pixel values
 raster <- ggplot() + 
   geom_stars(data = x) + 
   theme_void() + 
-  ggtitle("satellite image: Landsat 7 ETM") 
+  ggtitle("Satellite data: Landsat 7 ETM") 
 trajectory <- dplyr::storms %>% 
   filter(status == "hurricane") %>% 
   ggplot(aes(x = long, y = lat, group = interaction(name, year))) + 
   geom_path(size = 0.5) + 
   theme_bw() + 
-  ggtitle("trajectory: Atlantic hurricane paths") 
+  ggtitle("Trajectory: Atlantic hurricane paths") 
 ```
 
 ```{r}
@@ -98,13 +103,11 @@ Here we have three different types: vector, raster, trajectory data
 
 vector data have time series measured at a collection of locations
 
-raster data use gridded cells to represent a continuous space and each
-cell, or pixel, has variables measured at different time points. An
-example of raster data could be satellite images.
+satellite images use gridded cells to represent a continuous space and each
+cell, or pixel, has variables or bands measured at different time points.
 
 There is also trajectory data where points are moving in the space and
-time in the same time. This type of data can be found in ecology to
-track animal movements.
+time in the same time. Here we have an example of Atlantic hurricane paths.
 
 In my talk today, we will focus on vector data.
 :::
@@ -451,7 +454,7 @@ DATA %>%
     here.
 :::
 
-## [Example: averaged max temperature by month in Australia]{.r-fit-text}
+## [Example: averaged max temperature by month in Australia]{.r-fit-text} 
 
 ```{r echo = TRUE}
 cb <- make_cubble(spatial = stations, temporal = temperature)
@@ -460,8 +463,40 @@ cb <- make_cubble(spatial = stations, temporal = temperature)
   face_temporal() %>%
   tsibble::index_by(month = lubridate::month(date)) |> 
   summarise(tmax = mean(tmax, na.rm = TRUE)) %>%
-  unfold(long, lat))
+  unfold(long, lat)
+)
 ```
+
+## [Example: averaged max temperature by month in Australia]{.r-fit-text} 
+
+:::r-stack
+
+```{r}
+#| fig-width: 15
+cb_tbl <- cb_glyph |> as_tibble() |> filter(!is.na(tmax))
+p1 <- cb_tbl |> ggplot(aes(x = month, y = tmax, group = id, color = tmax)) +
+  geom_line() +
+  scale_x_continuous(breaks = 1:12, labels = month.abb) + 
+  scale_color_distiller(palette = "OrRd", direction = 1) +
+  theme_bw() + 
+  theme(panel.grid = element_blank(), legend.position = "bottom")
+
+p2 <- cb_tbl %>% 
+  ggplot(aes(x = long, y = lat, color = tmax)) +
+  geom_sf(data = oz_simp, fill = "grey90",
+          color = "white", inherit.aes = FALSE) +
+  scale_color_distiller(palette = "OrRd", direction = 1) +
+  geom_point() + 
+  ggthemes::theme_map()
+
+(p1 | p2) &
+  theme(legend.position='bottom')
+```
+
+![](figures/wrong-way-go-back.png){.fragment height="450"}
+
+:::
+
 
 ## [Example: averaged max temperature by month in Australia]{.r-fit-text}
 
@@ -477,7 +512,7 @@ group1_id <- cb_tbl |> filter(lat > -15) |> pull(id) |> unique()
 group2_id <- cb_tbl |> filter(month == 6, tmax > 27) |> pull(id)
 group3_id <- cb_tbl |> filter(month == 1, tmax > 35) |> pull(id)
 group3_id <- group3_id[!(group3_id %in% group2_id)]
-group4_id <- cb_tbl |> filter(lat < -42) |> pull(id) |> unique()
+group4_id <- cb_tbl |> filter(lat < -40) |> pull(id) |> unique()
 
 cb_grp <- cb_glyph |> 
   as_tibble() |>
@@ -517,6 +552,53 @@ cb_grp %>%
           color = "white", inherit.aes = FALSE) +
   geom_glyph_box(width = 1.5, height = 0.8) + 
   geom_glyph(aes(color = group), width = 1.5, height = 0.8) + 
+  scale_color_manual(values = c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "grey70")) +
+  ggthemes::theme_map()
+```
+
+:::
+::::
+
+## [Example: averaged max temperature by month in Australia]{.r-fit-text} 
+
+::::columns
+
+::: {.column width="50%"}
+
+```{r eval = FALSE, echo = TRUE}
+cb_grp %>% 
+  ggplot(aes(x_major = long, 
+             x_minor = month,
+             y_major = lat, 
+             y_minor = tmax, 
+             group = id,
+             color = group)) +
+  geom_sf(data = oz_simp, 
+          ...
+          inherit.aes = FALSE) +
+  geom_glyph_box(width = 1.5, 
+                 height = 0.8) + 
+  geom_glyph(width = 1.5,
+             height = 0.8) + 
+  ...
+  ggthemes::theme_map()
+```
+
+:::
+
+:::{.column width="50%"}
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 8
+cb_grp %>% 
+  ggplot(aes(x_major = long, x_minor = month,
+             y_major = lat, y_minor = tmax, group = id, color = group)) +
+  geom_sf(data = oz_simp, fill = "grey90",
+          color = "white", inherit.aes = FALSE) +
+  geom_glyph_box(width = 1.5, height = 0.8) + 
+  geom_glyph(width = 1.5, height = 0.8) + 
   scale_color_manual(values = c("#1b9e77", "#d95f02", "#7570b3", "#e7298a", "grey70")) +
   ggthemes::theme_map()
 ```
@@ -567,7 +649,7 @@ generate_svg(a, filename = "figures/qrcode.svg")
 ```
 
 -   this slide:
-    -   {{< fa link >}}: <https://sherryzhang-chamber2024.netlify.app>\
+    -   {{< fa link >}}: <https://sherryzhang-chamber2024.netlify.app>
     -   {{< fa brands github >}}:
         <https://github.com/huizezhang-sherry/chamber2024>
 -   the `cubble` package:

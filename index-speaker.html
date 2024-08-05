@@ -395,8 +395,9 @@
   <div class="reveal">
     <div class="slides">
 
-<section id="title-slide" class="quarto-title-block center">
+<section id="title-slide" data-background-image="figures/logo.png" data-background-position="98% 98%" data-background-size="7%" class="quarto-title-block center">
   <h1 class="title">Switching between space and time: Spatio-temporal analysis with cubble</h1>
+  <p class="subtitle">JSM 2024 John M. Chambers Statistical Software Award</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -429,8 +430,8 @@ H. Sherry Zhang
 <img data-src="index_files/figure-revealjs/unnamed-chunk-3-1.png" class="quarto-figure quarto-figure-center r-stretch" width="960"><aside class="notes">
 <p>Here we have three different types: vector, raster, trajectory data (explain each)</p>
 <p>vector data have time series measured at a collection of locations</p>
-<p>raster data use gridded cells to represent a continuous space and each cell, or pixel, has variables measured at different time points. An example of raster data could be satellite images.</p>
-<p>There is also trajectory data where points are moving in the space and time in the same time. This type of data can be found in ecology to track animal movements.</p>
+<p>satellite images use gridded cells to represent a continuous space and each cell, or pixel, has variables or bands measured at different time points.</p>
+<p>There is also trajectory data where points are moving in the space and time in the same time. Here we have an example of Atlantic hurricane paths.</p>
 <p>In my talk today, we will focus on vector data.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -795,7 +796,8 @@ Geodetic CRS:  WGS 84
 <span id="cb18-4"><a href=""></a>  <span class="fu">face_temporal</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb18-5"><a href=""></a>  tsibble<span class="sc">::</span><span class="fu">index_by</span>(<span class="at">month =</span> lubridate<span class="sc">::</span><span class="fu">month</span>(date)) <span class="sc">|&gt;</span> </span>
 <span id="cb18-6"><a href=""></a>  <span class="fu">summarise</span>(<span class="at">tmax =</span> <span class="fu">mean</span>(tmax, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb18-7"><a href=""></a>  <span class="fu">unfold</span>(long, lat))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-7"><a href=""></a>  <span class="fu">unfold</span>(long, lat)</span>
+<span id="cb18-8"><a href=""></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># cubble:   key: id [88], index: month, long form, [tsibble]
 # temporal: 1 -- 12 [1], no gaps
@@ -814,13 +816,28 @@ Geodetic CRS:  WGS 84
 </section>
 <section id="example-averaged-max-temperature-by-month-in-australia-1" class="slide level2">
 <h2><span class="r-fit-text">Example: averaged max temperature by month in Australia</span></h2>
+<div class="r-stack">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" width="1440"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><img data-src="figures/wrong-way-go-back.png" class="fragment" height="450"></p>
+</div>
+</section>
+<section id="example-averaged-max-temperature-by-month-in-australia-2" class="slide level2">
+<h2><span class="r-fit-text">Example: averaged max temperature by month in Australia</span></h2>
 <div class="columns">
 <div class="column" style="width:40%;">
 <div class="cell" data-layout-align="center">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-17-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="384"></p>
 </figure>
 </div>
 </div>
@@ -830,7 +847,43 @@ Geodetic CRS:  WGS 84
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-18-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-19-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-averaged-max-temperature-by-month-in-australia-3" class="slide level2">
+<h2><span class="r-fit-text">Example: averaged max temperature by month in Australia</span></h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>cb_grp <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href=""></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x_major =</span> long, </span>
+<span id="cb20-3"><a href=""></a>             <span class="at">x_minor =</span> month,</span>
+<span id="cb20-4"><a href=""></a>             <span class="at">y_major =</span> lat, </span>
+<span id="cb20-5"><a href=""></a>             <span class="at">y_minor =</span> tmax, </span>
+<span id="cb20-6"><a href=""></a>             <span class="at">group =</span> id,</span>
+<span id="cb20-7"><a href=""></a>             <span class="at">color =</span> group)) <span class="sc">+</span></span>
+<span id="cb20-8"><a href=""></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> oz_simp, </span>
+<span id="cb20-9"><a href=""></a>          <span class="at">fill =</span> <span class="st">"grey90"</span>,</span>
+<span id="cb20-10"><a href=""></a>          <span class="at">color =</span> <span class="st">"white"</span>, </span>
+<span id="cb20-11"><a href=""></a>          <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb20-12"><a href=""></a>  <span class="fu">geom_glyph_box</span>(<span class="at">width =</span> <span class="fl">1.5</span>, </span>
+<span id="cb20-13"><a href=""></a>                 <span class="at">height =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb20-14"><a href=""></a>  <span class="fu">geom_glyph</span>(<span class="at">width =</span> <span class="fl">1.5</span>,</span>
+<span id="cb20-15"><a href=""></a>             <span class="at">height =</span> <span class="fl">0.8</span>) <span class="sc">+</span> </span>
+<span id="cb20-16"><a href=""></a>  ...</span>
+<span id="cb20-17"><a href=""></a>  ggthemes<span class="sc">::</span><span class="fu">theme_map</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-21-1.png" class="quarto-figure quarto-figure-center" width="768"></p>
 </figure>
 </div>
 </div>
@@ -879,8 +932,7 @@ Geodetic CRS:  WGS 84
 <ul>
 <li>this slide:
 <ul>
-<li><i class="fa-solid fa-link" aria-label="link"></i>: <a href="https://sherryzhang-chamber2024.netlify.app" class="uri">https://sherryzhang-chamber2024.netlify.app</a><br>
-</li>
+<li><i class="fa-solid fa-link" aria-label="link"></i>: <a href="https://sherryzhang-chamber2024.netlify.app" class="uri">https://sherryzhang-chamber2024.netlify.app</a></li>
 <li><i class="fa-brands fa-github" aria-label="github"></i>: <a href="https://github.com/huizezhang-sherry/chamber2024" class="uri">https://github.com/huizezhang-sherry/chamber2024</a></li>
 </ul></li>
 <li>the <code>cubble</code> package:
@@ -899,7 +951,7 @@ Geodetic CRS:  WGS 84
 </ul>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
-
+<p>https://sherryzhang-chamber2024.netlify.app</p>
 </div>
 </div>
 </section>
